@@ -1,9 +1,42 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+import pygame
+import pygame.image
+from pygame.font import Font
+from pygame.rect import Rect
+from pygame.surface import Surface
+
+from code.const import WIN_WIDTH, TITLE_COLOR, MENU_OPTION, TEXT_COLOR
+
 
 class Menu:
     def __init__(self, window):
         self.window = window
+        self.surf = pygame.image.load('./asset/MenuBg.png') # Load image
+        self.rect = self.surf.get_rect() # Create rectangle
 
     def run(self, ):
-        pass
+        pygame.mixer_music.load('./asset/Menu.mp3') # Load music
+        pygame.mixer_music.play(-1) # play music (-1 = loop)
+
+        while True:
+            self.window.blit(source=self.surf, dest=self.rect) # Draw image
+            self.menu_text(50, "Mountain", TITLE_COLOR, ((WIN_WIDTH / 2), 70))
+            self.menu_text(50, "Shooter", TITLE_COLOR, ((WIN_WIDTH / 2), 120))
+
+            for i in range(len(MENU_OPTION)):
+                self.menu_text(20, MENU_OPTION[i] , TEXT_COLOR, ((WIN_WIDTH / 2), 200 + 25 * i))
+
+            pygame.display.flip() # Update display
+
+            # Check for all events
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit() # Close window
+                    quit()  # End pygame
+
+    def menu_text(self, text_size: int, text: str, text_color: tuple, text_center_pos: tuple):
+        text_font: Font = pygame.font.SysFont(name="Lucida Sans Typewriter", size=text_size)
+        text_surf: Surface = text_font.render(text, True, text_color).convert_alpha()
+        text_rect: Rect = text_surf.get_rect(center=text_center_pos)
+        self.window.blit(source=text_surf, dest=text_rect)
